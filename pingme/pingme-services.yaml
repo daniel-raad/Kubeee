@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pingme-services
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: pingme-services
+  name: local-pingme-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service_id: local-pingme-server
+  template:
+    metadata:
+      labels:
+        service_id: local-pingme-server
+    spec:
+      containers:
+      - name: local-pingme-server-container
+        image: docker.io/stream2stream/pingme
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: PINGME_ENDPOINT
+          value: http://remote-pingme-server-ep.pingme-services:8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: pingme-services
+  name: remote-pingme-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service_id: remote-pingme-server
+  template:
+    metadata:
+      labels:
+        service_id: remote-pingme-server
+    spec:
+      containers:
+      - name: remote-pingme-server-container
+        image: docker.io/stream2stream/pingme
+        imagePullPolicy: IfNotPresent
+---
+# The end point for service to service communications
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: pingme-services
+  name: remote-pingme-server-ep
+spec:
+  type: NodePort
+  selector:
+    service_id: remote-pingme-server
+  ports:
+  - nodePort: 30082
+    port: 8080
+    targetPort: 8080
+
+---
+# Expose the local one to the outside world
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: pingme-services
+  name: local-pingme-server-ep
+spec:
+  type: LoadBalancer
+  selector:
+      service_id: local-pingme-server
+  ports:
+  - port: 38092
+    targetPort: 8080

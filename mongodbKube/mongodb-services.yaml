@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mongodb-services
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: mongodb-services
+  name: mongo-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service_id: mongo-api-server
+  template:
+    metadata:
+      labels:
+        service_id: mongo-api-server
+    spec:
+      volumes:
+      - name: vol
+        hostPath:
+          path: /
+      containers:
+      - name: mongo-api-server-container
+        image: anthonywisdom/mongoapi
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: MONGODB_ENDPOINT
+          value: remote-mongodb-server-ep.mongodb-services:27017
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: mongodb-services
+  name: mongodb-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service_id: mongodb-server
+  template:
+    metadata:
+      labels:
+        service_id: mongodb-server
+    spec:
+      containers:
+      - name: mongodb-server-container
+        image: docker.io/mongo
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: "mongo-data"
+          mountPath: "/data/db"
+
+
+    
+
+---
+# The end point for service to service communications
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: mongodb-services
+  name: remote-mongodb-server-ep
+spec:
+  type: NodePort
+  selector:
+    service_id: mongodb-server
+  ports:
+  - nodePort: 30001
+    port: 27017
+    targetPort: 27017
+---
+# Expose the local one to the outside world
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: mongodb-services
+  name: local-mongodb-server-ep
+spec:
+  type: LoadBalancer
+  selector:
+      service_id: mongo-api-server
+  ports:
+  - port: 38092
+    targetPort: 8091
