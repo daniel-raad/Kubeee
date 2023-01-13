@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yml-pingserver-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service_id: pingserver-from-yml
+  template:
+    metadata:
+      labels:
+        service_id: pingserver-from-yml
+    spec:
+      containers:
+      - name: yml-pingserver
+        image: danielraad123/pingme

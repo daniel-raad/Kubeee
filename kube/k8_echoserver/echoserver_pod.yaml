@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: yml-echoserver
+spec:
+  containers:
+  - name: yml-es
+    image: k8s.gcr.io/echoserver:1.4

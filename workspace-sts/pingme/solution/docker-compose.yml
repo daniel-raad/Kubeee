@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  pingme_remote:
+      build:
+        context: .
+      container_name: pmr
+      restart: always
+      ports:
+        - "8090:8080"
+  pingme_local:
+      depends_on:
+        - "pingme_remote"
+      build:
+        context: .
+        dockerfile: ./Dockerfile
+      container_name: pml
+      restart: always
+      ports:
+        - "8080:8080"
+      environment:
+        PINGME_ENDPOINT: "pmr:8080"
+
+networks:
+  default:
+    name: pingme-net
+    external: false

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: yml-pingserver
+spec:
+  containers:
+  - name: yml-ps
+    image: danielraad123/pingme

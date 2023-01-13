@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: yml-echoservice-entrypoint
+  namespace: default
+spec:
+  type: NodePort
+  selector:
+      service_id: echo-server-from-yml
+  ports:
+  - nodePort: 30080
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: yml-echoservice-external-point
+  namespace: default
+spec:
+  type: LoadBalancer
+  selector:
+      service_id: echo-server-from-yml
+  ports:
+  - port: 30090
+    targetPort: 8080 

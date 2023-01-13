@@ -1,0 +1,30 @@
+
+
+
+		kubernetes: 
+
+
+- docker containerisation for images 
+
+
+- kubernetes - container orchestration tool 
+- both docker and any other container 
+- a pod - contains a docker container 
+- a pod serves as an interface between the two 
+- a pod can contain theoretically infinite number of containers 
+- 
+
+- services 
+	- front end serve to clients -- load balancer 
+		- create an IP address with port 80 exposed 
+		- when clients want to go they go to the IP address
+
+
+	- backend serve to front end - Cluster IP
+		- link all the ports together 
+		- Internal IP 
+
+	- Cluster is what we are launching things onto 
+	- A node is anything with compute power
+	- each node is a dedicated version machine 
+	- this is a nodeport solution, which exposes nodes across regions, so that they 

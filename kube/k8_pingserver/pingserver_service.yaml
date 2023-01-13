@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: yml-pingservice-entrypoint
+  namespace: default
+spec:
+  type: NodePort
+  selector:
+      service_id: pingserver-from-yml
+  ports:
+  - nodePort: 30080
+    port: 8080
+    targetPort: 8080

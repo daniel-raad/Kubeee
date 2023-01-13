@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yml-echoserver-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service_id: echo-server-from-yml
+  template:
+    metadata:
+      labels:
+        service_id: echo-server-from-yml
+    spec:
+      containers:
+      - name: yml-echo-server
+        image: k8s.gcr.io/echoserver:1.4
